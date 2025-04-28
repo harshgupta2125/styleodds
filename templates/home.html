@@ -1,0 +1,144 @@
+{% load static tailwind_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StyleOdds</title>
+    {% comment %} <link rel="stylesheet" href="{% static 'style.css' %}"> {% endcomment %}
+    {% tailwind_css %}
+
+</head>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{% static 'core/css/styles.css' %}">
+</head>
+
+<body class="bg-gray-50 text-gray-900 font-sans">
+
+<!-- Header -->
+<header class="bg-white shadow sticky top-0 z-50">
+  <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="text-2xl font-bold text-black"><a href="{% url 'home' %}">StyleOdds</a></div>
+
+    <!-- Desktop Menu -->
+    <nav class="hidden md:flex space-x-8 text-gray-700 font-medium">
+     
+      <a href="{% url 'home' %}" class="hover:text-black transition">Home</a>
+      <a href="{% url 'shop' %}" class="hover:text-black transition">Shop</a>
+      <a href="{% url 'vintage_archive' %}" class="hover:text-black transition">Vintage Archive</a>
+      <a href="{% url 'style_boards' %}" class="hover:text-black transition">Style Boards</a>
+      <a href="{% url 'cart' %}" class="hover:text-black transition">Cart (<span id="cart-count">0</span>)</a>
+      
+      {% if user.is_authenticated %}
+      <div x-data="{ open: false }" class="relative">
+          <button @click="open = !open" class="rounded-full bg-gray-200 p-2 focus:outline-none">
+              👤
+          </button>
+          <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-32 bg-white border rounded shadow-md py-2">
+              <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
+              <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</a>
+          </div>
+      </div>
+  {% else %}
+      <a href="{% url 'login' %}" class="text-gray-800 hover:text-gray-600 mx-2">Login</a>
+      <a href="{% url 'signup' %}" class="text-gray-800 hover:text-gray-600 mx-2">Signup</a>
+  {% endif %}
+
+    </nav>
+
+    <!-- Mobile Hamburger -->
+    <div class="md:hidden">
+      <button id="menu-btn" class="focus:outline-none">
+        <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="menu" class="hidden md:hidden bg-white">
+    <nav class="flex flex-col items-center py-4 space-y-4">
+      <a href="#" class="hover:text-black">Home</a>
+      <a href="#" class="hover:text-black">Shop</a>
+      <a href="#" class="hover:text-black">Vintage Archive</a>
+      <a href="#" class="hover:text-black">Style Boards</a>
+      <a href="#" class="hover:text-black">Login</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero Section -->
+<section class="relative h-screen flex items-center justify-center bg-cover bg-center" style="background-image: url('{% static 'core/images/fashion-hero.jpg' %}')">
+  <div class="absolute inset-0 bg-black opacity-50"></div>
+  <div class="text-center text-white relative z-10 animate-fade-in-up">
+    <h1 class="text-5xl md:text-7xl font-extrabold mb-6">StyleOdds</h1>
+    <p class="text-xl md:text-2xl mb-8 font-light">Where Vintage Meets Modern.</p>
+    <a href="{% url 'shop' %}" class="inline-block bg-white text-black font-semibold py-3 px-8 rounded-full hover:bg-gray-100 transition">Explore Collection</a>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20 bg-gray-100">
+  <div class="container mx-auto px-6 text-center">
+    <div class="flex flex-wrap justify-center gap-12">
+
+      <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl w-80 transition transform hover:-translate-y-2">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">Curated Vintage</h2>
+        <p class="text-gray-600">Rare pieces with timeless character and history.</p>
+      </div>
+
+      <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl w-80 transition transform hover:-translate-y-2">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">Modern Minimalism</h2>
+        <p class="text-gray-600">Classy silhouettes crafted for every identity.</p>
+      </div>
+
+      <div class="bg-white p-8 rounded-xl shadow-lg hover:shadow-2xl w-80 transition transform hover:-translate-y-2">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800">Eco-Friendly Focus</h2>
+        <p class="text-gray-600">Sustainably sourced, ethically crafted clothing.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-black text-white py-8">
+  <div class="container mx-auto text-center">
+    <p class="text-sm">&copy; 2025 StyleOdds. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script>
+  // Mobile menu toggle
+  const menuBtn = document.getElementById('menu-btn');
+  const menu = document.getElementById('menu');
+
+  menuBtn.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+  });
+
+  // Animation on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const heroText = document.querySelector('.animate-fade-in-up');
+    heroText.classList.add('opacity-0', 'translate-y-10');
+    setTimeout(() => {
+      heroText.classList.remove('opacity-0', 'translate-y-10');
+      heroText.classList.add('transition', 'duration-1000', 'ease-out');
+    }, 100);
+  });
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+</script>
+
+</body>
+</html>

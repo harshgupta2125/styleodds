@@ -1,0 +1,95 @@
+{% load static tailwind_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Details - StyleOdds</title>
+
+  <!-- Tailwind CSS -->
+    {% tailwind_css  %}
+</head>
+
+<body class="bg-gray-100 text-gray-900 font-sans">
+
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="text-2xl font-bold text-black"><a href="{% url 'home' %}">StyleOdds</a></div>
+  
+      <!-- Desktop Menu -->
+      <nav class="hidden md:flex space-x-8 text-gray-700 font-medium">
+       
+      <a href="{% url 'home' %}" class="hover:text-black transition">Home</a>
+      <a href="{% url 'shop' %}" class="hover:text-black transition">Shop</a>
+      <a href="{% url 'vintage_archive' %}" class="hover:text-black transition">Vintage Archive</a>
+      <a href="{% url 'style_boards' %}" class="hover:text-black transition">Style Boards</a>
+      <a href="{% url 'cart' %}" class="hover:text-black transition">Cart (<span id="cart-count">0</span>)</a>
+      <a href="{% url 'login'%}" class="hover:text-black transition">Login</a>
+      </nav>
+  
+      <!-- Mobile Hamburger -->
+      <div class="md:hidden">
+        <button id="menu-btn" class="focus:outline-none">
+          <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  
+    <!-- Mobile Menu -->
+    <div id="menu" class="hidden md:hidden bg-white">
+      <nav class="flex flex-col items-center py-4 space-y-4">
+        <a href="#" class="hover:text-black">Home</a>
+        <a href="#" class="hover:text-black">Shop</a>
+        <a href="#" class="hover:text-black">Vintage Archive</a>
+        <a href="#" class="hover:text-black">Style Boards</a>
+        <a href="#" class="hover:text-black">Login</a>
+      </nav>
+    </div>
+  </header>
+  
+
+  <!-- Product Details -->
+  <section class="container mx-auto px-6 py-12">
+    <div id="product" class="grid md:grid-cols-2 gap-10">
+      <!-- Product Info will load here -->
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <script>
+    async function loadProduct() {
+      const id = localStorage.getItem('productId');
+      if (!id) {
+        window.location.href = "{% url 'shop' %}";
+        return;
+      }
+
+      const res = await fetch(`https://dummyjson.com/products/${id}`);
+      const product = await res.json();
+      const priceInINR = Math.round(product.price * 83.5);
+
+      const productHTML = `
+        <div>
+          <img src="${product.thumbnail}" alt="${product.title}" class="w-full h-[500px] object-cover rounded-lg shadow-md">
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold mb-4">${product.title}</h1>
+          <p class="text-xl text-gray-700 mb-6">₹${priceInINR}</p>
+          <p class="mb-6">${product.description}</p>
+          <button class="bg-black text-white font-semibold py-3 px-8 rounded-full hover:bg-gray-800 transition">Add to Cart</button>
+        </div>
+      `;
+
+      document.getElementById('product').innerHTML = productHTML;
+    }
+
+    loadProduct();
+  </script>
+
+</body>
+</html>

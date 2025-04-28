@@ -1,0 +1,44 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - StyleOdds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="min-h-screen flex items-center justify-center bg-gray-50">
+        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+            <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">Login to StyleOdds</h2>
+            {% if error %}
+            <p class="text-red-500 text-center mb-4">{{ error }}</p>
+        {% endif %}
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="username" class="block text-gray-600">Username</label>
+                    <input type="text" name="username" id="username" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-gray-600">Password</label>
+                    <input type="password" name="password" id="password" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+                </div>
+                <button type="submit" class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition">Login</button>
+            </form>
+    
+            <div class="mt-6 text-center text-sm text-gray-600">
+                Don't have an account?
+                <a href="{% url 'signup' %}" class="text-indigo-500 hover:underline">Signup</a>
+            </div>
+    
+            <div class="mt-2 text-center text-sm text-gray-600">
+                Forgot your password?
+                <a href="{% url 'password_reset' %}" class="text-indigo-500 hover:underline">Reset Password</a>
+            </div>
+        </div>
+    </div>    
+    
+
+</body>

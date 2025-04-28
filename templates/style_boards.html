@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Style Boards - StyleOdds</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+<!-- Header -->
+<header class="bg-white shadow sticky top-0 z-50">
+  <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+    <div class="text-2xl font-bold text-black"><a href="{% url 'home' %}">StyleOdds</a></div>
+
+    <!-- Desktop Menu -->
+    <nav class="hidden md:flex space-x-8 text-gray-700 font-medium">
+     
+    <a href="{% url 'home' %}" class="hover:text-black transition">Home</a>
+    <a href="{% url 'shop' %}" class="hover:text-black transition">Shop</a>
+    <a href="{% url 'vintage_archive' %}" class="hover:text-black transition">Vintage Archive</a>
+    <a href="{% url 'style_boards' %}" class="hover:text-black transition">Style Boards</a>
+    <a href="{% url 'cart' %}" class="hover:text-black transition">Cart (<span id="cart-count">0</span>)</a>
+    <a href="{% url 'login'%}" class="hover:text-black transition">Login</a>
+    </nav>
+
+    <!-- Mobile Hamburger -->
+    <div class="md:hidden">
+      <button id="menu-btn" class="focus:outline-none">
+        <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+            d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="menu" class="hidden md:hidden bg-white">
+    <nav class="flex flex-col items-center py-4 space-y-4">
+      <a href="#" class="hover:text-black">Home</a>
+      <a href="#" class="hover:text-black">Shop</a>
+      <a href="#" class="hover:text-black">Vintage Archive</a>
+      <a href="#" class="hover:text-black">Style Boards</a>
+      <a href="#" class="hover:text-black">Login</a>
+    </nav>
+  </div>
+</header>
+
+
+<!-- Style Boards Section -->
+<div class="container mx-auto p-6">
+  <h2 class="text-xl font-semibold text-gray-800 mb-6">Your Style Boards</h2>
+
+  <!-- Create Style Board Button -->
+  <button onclick="showCreateBoardModal()" class="bg-black text-white py-2 px-6 rounded-full hover:bg-gray-800 transition text-lg mb-6">
+    Create New Style Board
+  </button>
+
+  <!-- Style Boards List -->
+  <div id="styleBoardsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Dynamic style boards will be displayed here -->
+  </div>
+</div>
+
+<!-- Create Board Modal -->
+<div id="createBoardModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center hidden transition-all">
+  <div class="bg-white p-8 rounded-xl shadow-xl w-1/2 max-w-3xl overflow-hidden transition-all">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Create New Style Board</h2>
+    <input type="text" id="boardName" placeholder="Style Board Name" class="w-full p-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600">
+    
+    <h3 class="text-xl font-semibold text-gray-700 mb-4">Select Clothing Items</h3>
+    <!-- Scrollable Product Selection Container -->
+    <div class="h-80 overflow-auto" id="productSelection">
+      <!-- Dynamic product items from the API will be inserted here -->
+    </div>
+
+    <div class="flex justify-end gap-4 mt-6">
+      <button onclick="closeCreateBoardModal()" class="bg-gray-400 text-white py-2 px-6 rounded-full">Cancel</button>
+      <button onclick="saveStyleBoard()" class="bg-black text-white py-2 px-6 rounded-full">Save Board</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tailwind Button Styles -->
+<style>
+  .product-card {
+    @apply bg-white p-6 rounded-xl shadow hover:shadow-lg transition cursor-pointer;
+  }
+  .product-card img {
+    @apply w-full h-40 object-cover rounded-lg mb-4;
+  }
+  .product-card h3 {
+    @apply text-lg font-semibold text-gray-800;
+  }
+  .product-card p {
+    @apply text-sm text-gray-500;
+  }
+  .product-card span {
+    @apply text-xl font-semibold text-green-600;
+  }
+</style>
+
+<!-- Script -->
+<script>
+// DummyJSON API URL for Clothing Data
+const apiUrl = 'https://dummyjson.com/products?category=clothing';
+
+let styleBoards = JSON.parse(localStorage.getItem("styleBoards")) || [];
+
+function showCreateBoardModal() {
+  document.getElementById('createBoardModal').classList.remove('hidden');
+  displayProductSelection();
+}
+
+function closeCreateBoardModal() {
+  document.getElementById('createBoardModal').classList.add('hidden');
+}
+
+async function displayProductSelection() {
+  const selectionContainer = document.getElementById('productSelection');
+  selectionContainer.innerHTML = '';
+
+  try {
+    const response = await fetch(apiUrl); // Fetch products from DummyJSON API
+    const data = await response.json(); // Assuming the response contains the "products" field
+
+    const products = data.products;
+
+    products.forEach(product => {
+      selectionContainer.innerHTML += `
+        <div class="product-card transition-all transform hover:scale-105" onclick="addToBoard('${product.name}', '${product.image}', '${product.description}', ${product.price})">
+          <img src="${product.image}" alt="${product.name}">
+          <h3>${product.name}</h3>
+          <p>${product.description}</p>
+          <span>₹${product.price}</span>
+        </div>
+      `;
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    selectionContainer.innerHTML = "<p class='text-red-500'>Error loading products. Please try again later.</p>";
+  }
+}
+
+function addToBoard(name, image, description, price) {
+  const board = {
+    name,
+    image,
+    description,
+    price
+  };
+
+  const boardName = document.getElementById('boardName').value;
+  if (!boardName) {
+    alert("Please give your style board a name.");
+    return;
+  }
+
+  let existingBoard = styleBoards.find(board => board.name === boardName);
+  if (!existingBoard) {
+    existingBoard = { name: boardName, items: [] };
+    styleBoards.push(existingBoard);
+  }
+
+  existingBoard.items.push(board);
+  localStorage.setItem("styleBoards", JSON.stringify(styleBoards));
+
+  alert("Clothing item added to your style board!");
+}
+
+function displayStyleBoards() {
+  const styleBoardsList = document.getElementById('styleBoardsList');
+  styleBoardsList.innerHTML = '';
+
+  styleBoards.forEach(board => {
+    styleBoardsList.innerHTML += `
+      <div class="bg-white p-6 rounded-3xl shadow hover:shadow-lg transition-all flex flex-col">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">${board.name}</h2>
+        <div class="flex flex-wrap gap-4">
+          ${board.items.map(item => `
+            <div class="bg-white p-4 rounded-lg shadow-md">
+              <img src="${item.image}" alt="${item.name}" class="h-40 w-40 object-cover mb-4 rounded-lg">
+              <h3 class="text-lg font-semibold text-gray-800">${item.name}</h3>
+              <span class="text-sm text-gray-500">${item.description}</span>
+              <p class="text-xl font-semibold text-green-600">₹${item.price}</p>
+            </div>
+          `).join('')}
+        </div>
+        <button class="mt-4 bg-black text-white py-2 px-6 rounded-full hover:bg-gray-800 transition-all">Share Board</button>
+      </div>
+    `;
+  });
+}
+
+// Initial Load of Style Boards
+displayStyleBoards();
+</script>
+
+</body>
+</html>

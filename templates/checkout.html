@@ -1,0 +1,143 @@
+{% load static tailwind_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout - StyleOdds</title>
+
+  <!-- Tailwind CSS -->
+  {% tailwind_css  %}
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+
+  <header class="bg-white shadow sticky top-0 z-50">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="text-2xl font-bold text-black"><a href="{% url 'home' %}">StyleOdds</a></div>
+  
+      <!-- Desktop Menu -->
+      <nav class="hidden md:flex space-x-8 text-gray-700 font-medium">
+       
+      <a href="{% url 'home' %}" class="hover:text-black transition">Home</a>
+      <a href="{% url 'shop' %}" class="hover:text-black transition">Shop</a>
+      <a href="{% url 'vintage_archive' %}" class="hover:text-black transition">Vintage Archive</a>
+      <a href="{% url 'style_boards' %}" class="hover:text-black transition">Style Boards</a>
+      <a href="{% url 'cart' %}" class="hover:text-black transition">Cart (<span id="cart-count">0</span>)</a>
+      <a href="{% url 'login'%}" class="hover:text-black transition">Login</a>
+      </nav>
+  
+      <!-- Mobile Hamburger -->
+      <div class="md:hidden">
+        <button id="menu-btn" class="focus:outline-none">
+          <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  
+    <!-- Mobile Menu -->
+    <div id="menu" class="hidden md:hidden bg-white">
+      <nav class="flex flex-col items-center py-4 space-y-4">
+        <a href="#" class="hover:text-black">Home</a>
+        <a href="#" class="hover:text-black">Shop</a>
+        <a href="#" class="hover:text-black">Vintage Archive</a>
+        <a href="#" class="hover:text-black">Style Boards</a>
+        <a href="#" class="hover:text-black">Login</a>
+      </nav>
+    </div>
+  </header>
+  
+
+  <!-- Checkout Section -->
+  <section class="container mx-auto px-6 py-10">
+    <h2 class="text-3xl font-bold mb-8">Checkout</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Billing Details -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-2xl font-semibold mb-6">Billing Details</h3>
+        <form id="checkout-form" action="/create-checkout-session/" method="POST">
+          {% csrf_token %}
+          <div class="space-y-4">
+            <div>
+              <label class="block mb-2 font-medium">Full Name</label>
+              <input type="text" name="name" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+            </div>
+            <div>
+              <label class="block mb-2 font-medium">Email Address</label>
+              <input type="email" name="email" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+            </div>
+            <div>
+              <label class="block mb-2 font-medium">Phone Number</label>
+              <input type="text" name="phone" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+            </div>
+            <div>
+              <label class="block mb-2 font-medium">Shipping Address</label>
+              <input type="text" name="address" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+            </div>
+            <div>
+              <label class="block mb-2 font-medium">City</label>
+              <input type="text" name="city" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+            </div>
+            <div>
+              <label class="block mb-2 font-medium">Postal Code</label>
+              <input type="text" name="postal_code" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+            </div>
+          </div>
+          <form id="checkout-form" action="{% url 'create_checkout_session' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="bg-black w-full text-white py-3 px-6 rounded-full text-lg hover:bg-gray-800 transition">
+              Pay Online
+            </button>
+          </form>
+          
+        </form>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-2xl font-semibold mb-6">Order Summary</h3>
+        <div id="order-summary" class="space-y-4">
+          <!-- Dynamically list products from cart here -->
+        </div>
+        <hr class="my-4">
+        <div class="flex justify-between text-xl font-bold">
+          <span>Total</span>
+          <span id="order-total">₹0</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <script>
+    function loadSummary() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let summaryContainer = document.getElementById('order-summary');
+      let total = 0;
+      summaryContainer.innerHTML = '';
+
+      cart.forEach(item => {
+        const itemHTML = `
+          <div class="flex justify-between text-lg">
+            <span>${item.title} x${item.quantity}</span>
+            <span>₹${item.price * item.quantity}</span>
+          </div>
+        `;
+        total += item.price * item.quantity;
+        summaryContainer.insertAdjacentHTML('beforeend', itemHTML);
+      });
+
+      total += 100; // Shipping ₹100
+      document.getElementById('order-total').textContent = `₹${total}`;
+    }
+
+    loadSummary();
+  </script>
+
+</body>
+</html>
