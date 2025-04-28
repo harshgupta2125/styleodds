@@ -147,6 +147,3 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-STRIPE_PUBLIC_KEY = 'pk_test_51RIZlNCocc5SJXFJ1XQCM3yYFzaRKK6YVAioSebl96gwLOHjaUAX36HMfIxaxqUtK0LKlSa9Dk7cjPzdDbWDgW9h00gXK79Isw'
-STRIPE_SECRET_KEY = 'sk_test_51RIZlNCocc5SJXFJ4y5DGWctZ1V5b4KxoZoelxm5R0EXqq5JRieBHPsrmITDSHiHRxUik0JY7ctvwrTaRhVwtOGk00EuyDIbi4'
