@@ -5,10 +5,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
-
-
-from django.contrib.auth.models import User
 from django.contrib import messages
 
 def signup_view(request):
@@ -60,19 +56,63 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
-from django.shortcuts import render, redirect
-from .forms import ProfileForm
-from .models import Profile
 
+
+from django.shortcuts import render, redirect
+from .models import UserProfile
+from .forms import UserProfileForm
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
 def profile_view(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
+    user = request.user
+    profile, created = UserProfile.objects.get_or_create(user=user)
 
     if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')  # Redirect after save to view-only profile
+    else:
+        # Check if the profile is complete
+        if profile.full_name and profile.phone_number:  # You can add more checks
+            return render(request, 'accounts/profile_view.html', {'profile': profile})
+        else:
+            form = UserProfileForm(instance=profile)
+            return render(request, 'accounts/profile_edit.html', {'form': form})
+
+@login_required
+def edit_profile_view(request):
+    user = request.user
+    profile, created = UserProfile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
             form.save()
             return redirect('profile')
     else:
-        form = ProfileForm(instance=profile)
+        form = UserProfileForm(instance=profile)
 
-    return render(request, 'accounts/profile.html', {'form': form, 'profile': profile})
+    return render(request, 'accounts/profile_edit.html', {'form': form})
+
+from .models import CartItem  # Replace with your actual cart item model
+
+@login_required(login_url='login')  # Redirects to login if not logged in
+def cart(request):
+    cart_items = CartItem.objects.filter(user=request.user)
+    subtotal = sum(item.product.price * item.quantity for item in cart_items)  # Adjust fields if different
+
+    # Apply shipping only if cart has items
+    shipping = 100 if cart_items.exists() else 0
+    total = subtotal + shipping
+
+    context = {
+        'cart_items': cart_items,
+        'subtotal': subtotal,
+        'shipping': shipping,
+        'total': total,
+    }
+
+    return render(request, 'cart.html', context)

@@ -41,8 +41,7 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'accounts',
-    'django_browser_reload',
-    
+    'django_browser_reload',   
 ]
 
 TAILWIND_APP_NAME = 'theme'
@@ -119,6 +118,8 @@ LOGIN_REDIRECT_URL = '/'  # Home page after login
 LOGOUT_REDIRECT_URL = '/'  # Home page after logout
 
 
+LOGIN_REDIRECT_URL = '/accounts/profile_view/'  # Redirect to profile view after login
+LOGOUT_REDIRECT_URL = '/accounts/login/'
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -140,10 +141,9 @@ STATICFILES_DIRS= [os.path.join(BASE_DIR, 'static')]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-LOGIN_REDIRECT_URL = '/accounts/profile_view/'  # Redirect to profile view after login
-LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

@@ -34,7 +34,7 @@
       <a href="{% url 'vintage_archive' %}" class="hover:text-black transition">Vintage Archive</a>
       <a href="{% url 'style_boards' %}" class="hover:text-black transition">Style Boards</a>
       <a href="{% url 'cart' %}" class="hover:text-black transition">Cart (<span id="cart-count">0</span>)</a>
-      
+       
       {% if user.is_authenticated %}
       <div x-data="{ open: false }" class="relative">
           <button @click="open = !open" class="rounded-full bg-gray-200 p-2 focus:outline-none">
@@ -137,6 +137,32 @@
   });
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+  const cartCount = document.getElementById("cart-count");
+
+  function addToCart(id, title, price, image) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingProduct = cart.find((item) => item.id === id);
+    if (existingProduct) {
+      existingProduct.quantity += 1;
+    } else {
+      cart.push({ id, title, price, image, quantity: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    alert("Item added to cart!");
+  }
+
+  function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cartCount.textContent = cart.reduce(
+      (sum, item) => sum + item.quantity,
+      0
+    );
+  }
+
+  updateCartCount();
+  loadProducts();
 
 </script>
 

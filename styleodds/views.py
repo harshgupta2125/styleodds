@@ -90,3 +90,4 @@ def create_checkout_session(request):
         except Exception as e:
             return JsonResponse({'error': str(e)})
     return render(request, 'checkout.html')
+
