@@ -4,51 +4,122 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vintage Archive - StyleOdds</title>
-{%tailwind_css%}  <link href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" rel="stylesheet">
-  <!-- In <head> or just before </body> -->
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
+  {% tailwind_css %}
+  <link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(to bottom, #1e293b, #0f172a);
+    }
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s forwards;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .swiper {
+      @apply rounded-xl overflow-hidden shadow-2xl;
+    }
+    .swiper-slide {
+      @apply relative;
+    }
+    .swiper-slide img {
+      @apply w-full h-full object-cover;
+    }
+    .swiper-button-next,
+    .swiper-button-prev {
+      @apply text-blue-500 hover:text-blue-400 transition-colors duration-300;
+    }
+    .swiper-pagination-bullet {
+      @apply bg-blue-500 opacity-50;
+    }
+    .swiper-pagination-bullet-active {
+      @apply opacity-100;
+    }
+    .filter-btn {
+      @apply bg-slate-800/50 text-white py-2 px-5 rounded-full 
+             border-2 border-slate-600/50
+             hover:bg-blue-600/90 hover:border-blue-400 
+             transition-all duration-300 ease-in-out
+             transform hover:scale-105
+             text-sm md:text-base font-medium
+             shadow-lg hover:shadow-xl
+             backdrop-blur-sm;
+    }
+    .filter-btn.active {
+      @apply bg-blue-500/90 border-blue-400 shadow-xl;
+    }
+    .product-card {
+      @apply bg-slate-800/50 p-6 rounded-xl 
+             border border-slate-700/50
+             hover:border-blue-500/50
+             transition-all duration-300 ease-in-out
+             transform hover:-translate-y-1
+             shadow-lg hover:shadow-xl
+             backdrop-blur-sm;
+    }
+    .product-card img {
+      @apply rounded-lg mb-4
+             transition-transform duration-300 ease-in-out
+             transform hover:scale-105;
+    }
+    .product-card button {
+      @apply transition-all duration-300 ease-in-out
+             hover:bg-blue-600 hover:scale-105;
+    }
+    .glass-effect {
+      @apply bg-slate-800/50 backdrop-blur-sm border border-slate-700/50;
+    }
+  </style>
 </head>
 
-<body class="bg-gray-100 font-sans">
-
+<body class="min-h-screen text-white">
 
 <!-- Header -->
-<header class="bg-white shadow sticky top-0 z-50">
+<header class="bg-slate-800 shadow sticky top-0 z-50">
+
   <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-    <div class="text-2xl font-bold text-black"><a href="{% url 'home' %}">StyleOdds</a></div>
+    <div class="text-2xl font-bold text-white">
+      <a href="{% url 'home' %}" class="hover:text-blue-400 transition-colors duration-300">StyleOdds</a>
+    </div>
 
     <!-- Desktop Menu -->
-    <nav class="hidden md:flex space-x-8 text-gray-700 font-medium">
-     
-      <a href="{% url 'home' %}" class="hover:text-black transition">Home</a>
-      <a href="{% url 'shop' %}" class="hover:text-black transition">Shop</a>
-      <a href="{% url 'vintage_archive' %}" class="hover:text-black transition">Vintage Archive</a>
-      <a href="{% url 'style_boards' %}" class="hover:text-black transition">Style Boards</a>
-      <a href="{% url 'cart' %}" class="hover:text-black transition">Cart (<span id="cart-count">0</span>)</a>
+    <nav class="hidden md:flex space-x-8 text-gray-300 font-medium">
+      <a href="{% url 'home' %}" class="hover:text-white transition">Home</a>
+      <a href="{% url 'shop' %}" class="hover:text-white transition">Shop</a>
+      <a href="{% url 'vintage_archive' %}" class="hover:text-white transition">Vintage Archive</a>
+      <a href="{% url 'style_boards' %}" class="hover:text-white transition">Style Boards</a>
+      <a href="{% url 'cart' %}" class="hover:text-white transition">Cart (<span id="cart-count">0</span>)</a>
       
       {% if user.is_authenticated %}
       <div x-data="{ open: false }" class="relative">
-          <button @click="open = !open" class="rounded-full bg-gray-200 p-2 focus:outline-none">
-              👤
-          </button>
-          <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-32 bg-white border rounded shadow-md py-2">
-              <a href="{% url 'profile' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
-              <a href="{% url 'logout' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Logout</a>
-          </div>
+        <button @click="open = !open" class="rounded-full bg-slate-700 p-2 hover:bg-blue-600 transition-colors duration-300">
+          👤
+        </button>
+        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-32 glass-effect rounded-lg shadow-xl py-2">
+          <a href="{% url 'profile' %}" class="block px-4 py-2 text-white hover:bg-blue-600/50 transition-colors duration-300">Profile</a>
+          <a href="{% url 'logout' %}" class="block px-4 py-2 text-white hover:bg-blue-600/50 transition-colors duration-300">Logout</a>
+        </div>
       </div>
-  {% else %}
-      <a href="{% url 'login' %}" class="text-gray-800 hover:text-gray-600 mx-2">Login</a>
-      <a href="{% url 'signup' %}" class="text-gray-800 hover:text-gray-600 mx-2">Signup</a>
-  {% endif %}
-
+      {% else %}
+      <a href="{% url 'login' %}" class="hover:text-white transition-colors duration-300">Login</a>
+      <a href="{% url 'signup' %}" class="hover:text-white transition-colors duration-300">Signup</a>
+      {% endif %}
     </nav>
 
     <!-- Mobile Hamburger -->
     <div class="md:hidden">
       <button id="menu-btn" class="focus:outline-none">
-        <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
             d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
@@ -57,126 +128,187 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div id="menu" class="hidden md:hidden bg-white">
+  <div id="menu" class="hidden md:hidden glass-effect">
     <nav class="flex flex-col items-center py-4 space-y-4">
-      <a href="#" class="hover:text-black">Home</a>
-      <a href="#" class="hover:text-black">Shop</a>
-      <a href="#" class="hover:text-black">Vintage Archive</a>
-      <a href="#" class="hover:text-black">Style Boards</a>
-      <a href="#" class="hover:text-black">Login</a>
+      <a href="#" class="hover:text-blue-400 transition-colors duration-300">Home</a>
+      <a href="#" class="hover:text-blue-400 transition-colors duration-300">Shop</a>
+      <a href="#" class="hover:text-blue-400 transition-colors duration-300">Vintage Archive</a>
+      <a href="#" class="hover:text-blue-400 transition-colors duration-300">Style Boards</a>
+      <a href="#" class="hover:text-blue-400 transition-colors duration-300">Login</a>
     </nav>
   </div>
 </header>
 
+<!-- Hero Section -->
+<section class="relative py-20 bg-cover bg-center" style="background-image: url('{% static 'core/images/fashion-hero.jpg' %}');">
+  <div class="absolute inset-0 bg-gradient-to-b from-blue-900/90 via-blue-800/80 to-slate-900/90"></div>
+  <div class="text-center text-white relative z-10 fade-in-up">
+    <h1 class="text-5xl md:text-7xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600">Vintage Archive</h1>
+    <p class="text-xl md:text-2xl mb-8 font-light text-gray-200">
+      Timeless Styles Through Decades  
+    </p>
+  </div>
+</section>
 
 <!-- Carousel for Featured Vintage Items -->
-<div class="swiper-container my-6">
-  <div class="swiper-wrapper">
-    <div class="swiper-slide">
-      <img src="https://images.pexels.com/photos/1183242/pexels-photo-1183242.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="Featured Vintage 1" class="w-full h-80 object-cover rounded-lg">
+<div class="container mx-auto px-4 my-8 md:my-12 lg:my-16">
+  <div class="swiper h-[300px] md:h-[400px] lg:h-[500px] rounded-xl">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <img src="{% static 'images/vintage2.avif' %}" alt="Featured Vintage 1" class="w-full h-full object-cover">
+      </div>
+      <div class="swiper-slide">
+        <img src="{% static 'images/vintage1.jpg' %}" alt="Featured Vintage 2" class="w-full h-full object-cover">
+      </div>
+      <div class="swiper-slide">
+        <img src="{% static 'images/vintage3.jpg' %}" alt="Featured Vintage 3" class="w-full h-full object-cover">
+      </div>
     </div>
-    <div class="swiper-slide">
-      <img src="https://images.pexels.com/photos/1222270/pexels-photo-1222270.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="Featured Vintage 2" class="w-full h-80 object-cover rounded-lg">
-    </div>
-    <div class="swiper-slide">
-      <img src="https://images.pexels.com/photos/1761166/pexels-photo-1761166.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="Featured Vintage 3" class="w-full h-80 object-cover rounded-lg">
-    </div>
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-next text-blue-500"></div>
+    <div class="swiper-button-prev text-blue-500"></div>
   </div>
-  <div class="swiper-pagination"></div>
 </div>
 
 <!-- Filters -->
-<div class="flex flex-wrap justify-center gap-3 p-6">
-  <button onclick="filterProducts('all')" class="filter-btn">All</button>
-  <button onclick="filterProducts('genz')" class="filter-btn">GenZ</button>
-  <button onclick="filterProducts('90s')" class="filter-btn">90s</button>
-  <button onclick="filterProducts('80s')" class="filter-btn">80s</button>
-  <button onclick="filterProducts('20s')" class="filter-btn">20s</button>
-  <button onclick="filterProducts('retro')" class="filter-btn">Retro</button>
-  <button onclick="filterProducts('boho')" class="filter-btn">Boho</button>
-  <button onclick="filterProducts('casual')" class="filter-btn">Casual</button>
-  <button onclick="filterProducts('formal')" class="filter-btn">Formal</button>
+<div class="container mx-auto px-4">
+  <div class="flex flex-wrap justify-center gap-3 md:gap-4 p-4 md:p-6">
+    <button onclick="filterProducts('all')" class="filter-btn active">All Styles</button>
+    <button onclick="filterProducts('old-money')" class="filter-btn">Old Money Style</button>
+    <button onclick="filterProducts('modern-luxury')" class="filter-btn">Modern Luxury</button>
+    <button onclick="filterProducts('european-summer')" class="filter-btn">European Summer</button>
+    <button onclick="filterProducts('vintage-gentleman')" class="filter-btn">Vintage Gentleman</button>
+    <button onclick="filterProducts('italian')" class="filter-btn">Italian Style</button>
+  </div>
 </div>
 
 <!-- Products -->
-<div id="products" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6"></div>
-
-<!-- Load More Button -->
-<div class="flex justify-center my-6">
-  <button onclick="loadMore()" id="loadMoreBtn" class="bg-black text-white py-3 px-8 rounded-full hover:bg-gray-800 transition text-lg hidden">
-    Load More
-  </button>
+<div class="container mx-auto px-4">
+  <div id="products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 py-8"></div>
 </div>
 
-<!-- Tailwind Button Styles -->
-<style>
-  .filter-btn {
-    @apply bg-black text-white py-2 px-5 rounded-full hover:bg-gray-800 transition text-sm;
-  }
-  .tag {
-    @apply absolute top-2 left-2 bg-white text-black text-xs font-bold px-2 py-1 rounded;
-  }
-</style>
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-gray-400 py-8">
+      <div class="container mx-auto px-6">
+        <!-- Main Footer Links -->
+        <div class="flex flex-wrap justify-between items-start mb-8">
+          <!-- Section Headers -->
+          <div class="w-full flex justify-between mb-6">
+            <h3 class="text-white text-lg font-semibold">ABOUT</h3>
+            <h3 class="text-white text-lg font-semibold">HELP</h3>
+            <h3 class="text-white text-lg font-semibold">POLICY</h3>
+            <h3 class="text-white text-lg font-semibold">SOCIAL</h3>
+          </div>
+
+          <!-- About Links -->
+          <div class="w-1/4">
+            <ul class="space-y-2">
+              <li><a href="#" class="hover:text-white transition">About Us</a></li>
+              <li><a href="#" class="hover:text-white transition">Careers</a></li>
+              <li><a href="#" class="hover:text-white transition">Press</a></li>
+              <li><a href="#" class="hover:text-white transition">Corporate Information</a></li>
+            </ul>
+          </div>
+
+          <!-- Help Links -->
+          <div class="w-1/4">
+            <ul class="space-y-2">
+              <li><a href="#" class="hover:text-white transition">Customer Service</a></li>
+              <li><a href="#" class="hover:text-white transition">How to Buy</a></li>
+              <li><a href="#" class="hover:text-white transition">Shipping & Delivery</a></li>
+              <li><a href="#" class="hover:text-white transition">Return & Exchanges</a></li>
+              <li><a href="#" class="hover:text-white transition">FAQs</a></li>
+            </ul>
+          </div>
+
+          <!-- Policy Links -->
+          <div class="w-1/4">
+            <ul class="space-y-2">
+              <li><a href="#" class="hover:text-white transition">Return Policy</a></li>
+              <li><a href="#" class="hover:text-white transition">Terms Of Use</a></li>
+              <li><a href="#" class="hover:text-white transition">Security</a></li>
+              <li><a href="#" class="hover:text-white transition">Privacy</a></li>
+              <li><a href="#" class="hover:text-white transition">Sitemap</a></li>
+            </ul>
+          </div>
+
+          <!-- Social Links -->
+          <div class="w-1/4">
+            <div class="flex space-x-4">
+              <a href="#" class="hover:text-white transition">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+                </svg>
+              </a>
+              <a href="#" class="hover:text-white transition">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"/>
+                </svg>
+              </a>
+              <a href="#" class="hover:text-white transition">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clip-rule="evenodd"/>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="border-t border-slate-800 pt-6">
+          <div class="flex flex-wrap justify-between items-center">
+            <div class="flex flex-wrap gap-x-8 gap-y-2 mb-4 md:mb-0">
+              <a href="#" class="hover:text-white transition">Become a Seller</a>
+              <a href="#" class="hover:text-white transition">Advertise</a>
+              <a href="#" class="hover:text-white transition">Gift Cards</a>
+              <a href="#" class="hover:text-white transition">Help Center</a>
+            </div>
+            <div class="text-sm">
+              &copy; 2025 StyleOdds.com
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
 
 <!-- Script -->
-<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
 const allProducts = [
   {
-    name: "Grunge 90s Denim Combo",
-    era: "90s",
-    style: "Vintage 90s",
-    price: 2499,
-    image: "https://images.pexels.com/photos/1183242/pexels-photo-1183242.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    description: "Baggy jeans + Plaid shirt + Vintage sneakers."
-  },
-  {
-    name: "Elegant 20s Gatsby Suit",
-    era: "20s",
-    style: "Vintage 20s",
+    name: "Classic Old Money Look",
+    style: "old-money",
     price: 4999,
+    image: "https://images.pexels.com/photos/1183242/pexels-photo-1183242.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+    description: "Timeless tweed blazer with cashmere sweater and tailored trousers."
+  },
+  {
+    name: "Modern Luxury Suit",
+    style: "modern-luxury",
+    price: 5999,
     image: "https://images.pexels.com/photos/1222270/pexels-photo-1222270.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    description: "Three-piece classic suit inspired by 1920s style."
+    description: "Contemporary cut suit with premium fabrics and modern details."
   },
   {
-    name: "Retro Funky Streetwear",
-    era: "retro",
-    style: "Retro",
-    price: 1999,
-    image: "https://images.pexels.com/photos/1584739/pexels-photo-1584739.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    description: "Color-block oversized jacket + sneakers."
-  },
-  {
-    name: "GenZ Baggy Casual Combo",
-    era: "genz",
-    style: "GenZ",
-    price: 1799,
-    image: "https://images.pexels.com/photos/2302155/pexels-photo-2302155.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    description: "Oversized T-shirt + Joggers + Chunky sneakers."
-  },
-  {
-    name: "Classic 80s Blazer Power Look",
-    era: "80s",
-    style: "Vintage 80s",
-    price: 2999,
+    name: "European Summer Collection",
+    style: "european-summer",
+    price: 3499,
     image: "https://images.pexels.com/photos/1761166/pexels-photo-1761166.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    description: "Power shoulder blazer + Formal trousers."
+    description: "Light linen suits and breathable fabrics for summer elegance."
   },
   {
-    name: "Vintage 70s Boho Chic",
-    era: "retro",
-    style: "Retro",
-    price: 2299,
-    image: "https://images.pexels.com/photos/1096940/pexels-photo-1096940.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    description: "Flared pants, fringed jackets and floral prints."
+    name: "Vintage Gentleman's Wardrobe",
+    style: "vintage-gentleman",
+    price: 4499,
+    image: "https://images.pexels.com/photos/1584739/pexels-photo-1584739.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+    description: "Classic three-piece suits with vintage accessories."
   },
   {
-    name: "Minimal 20s Summer Dress",
-    era: "20s",
-    style: "Vintage 20s",
-    price: 2599,
-    image: "https://images.pexels.com/photos/4120414/pexels-photo-4120414.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-    description: "Lightweight linen dresses for the 20s summer look."
+    name: "Italian Tailored Collection",
+    style: "italian",
+    price: 5499,
+    image: "https://images.pexels.com/photos/2302155/pexels-photo-2302155.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+    description: "Premium Italian fabrics with impeccable tailoring."
   }
 ];
 
@@ -188,51 +320,46 @@ function displayProducts(products) {
   const container = document.getElementById('products');
   container.innerHTML = '';
 
-  const limitedProducts = products.slice(0, productsPerPage);
-
-  limitedProducts.forEach(product => {
+  products.forEach(product => {
     container.innerHTML += `
-      <div class="bg-white p-6 rounded-3xl shadow hover:shadow-lg transition flex flex-col relative">
-        <span class="tag">${product.era}</span>
-        <img src="${product.image}" alt="${product.name}" class="h-64 w-full object-cover rounded-xl mb-4">
-        <h2 class="text-xl font-semibold text-gray-800 mb-2">${product.name}</h2>
-        <p class="text-gray-500 text-sm mb-3">${product.description}</p>
+      <div class="product-card fade-in-up group">
+        <div class="relative overflow-hidden rounded-lg mb-4">
+          <img src="${product.image}" alt="${product.name}" class="h-48 md:h-64 w-full object-cover">
+        </div>
+        <h2 class="text-lg md:text-xl font-semibold text-white mb-2 group-hover:text-blue-400 transition-colors duration-300">${product.name}</h2>
+        <p class="text-gray-300 text-sm mb-3">${product.description}</p>
         <div class="flex justify-between items-center mt-auto">
-          <span class="text-lg font-bold text-green-600">₹${product.price}</span>
-          <button class="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition">Add to Cart</button>
+          <span class="text-base md:text-lg font-bold text-blue-400">₹${product.price}</span>
+          <button class="bg-blue-500 text-white px-4 py-2 rounded-full shadow-md hover:bg-blue-600 transition-colors duration-300">Add to Cart</button>
         </div>
       </div>
     `;
   });
-
-  if (productsPerPage >= products.length) {
-    document.getElementById('loadMoreBtn').classList.add('hidden');
-  } else {
-    document.getElementById('loadMoreBtn').classList.remove('hidden');
-  }
 }
 
-function filterProducts(era) {
-  currentFilter = era;
-  productsPerPage = 3; // Reset when filter changes
+function filterProducts(style) {
+  currentFilter = style;
+  productsPerPage = 3;
+  
+  // Update active button
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.textContent.toLowerCase().includes(style)) {
+      btn.classList.add('active');
+    }
+  });
 
-  if (era === 'all') {
-    currentProducts = allProducts;
-  } else {
-    currentProducts = allProducts.filter(product => product.era === era || product.style.toLowerCase() === era.toLowerCase());
-  }
-  displayProducts(currentProducts);
+  const filteredProducts = style === 'all' 
+    ? allProducts 
+    : allProducts.filter(product => product.style === style);
+  
+  displayProducts(filteredProducts);
 }
 
-function loadMore() {
-  productsPerPage += 3;
-  displayProducts(currentProducts);
-}
-
-// Initialize Swiper
-var swiper = new Swiper('.swiper-container', {
+// Initialize Swiper with enhanced options
+const swiper = new Swiper('.swiper', {
   slidesPerView: 1,
-  spaceBetween: 10,
+  spaceBetween: 0,
   loop: true,
   autoplay: {
     delay: 5000,
@@ -242,11 +369,32 @@ var swiper = new Swiper('.swiper-container', {
     el: '.swiper-pagination',
     clickable: true,
   },
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+  effect: 'fade',
+  fadeEffect: {
+    crossFade: true
+  },
+  speed: 1000,
+  grabCursor: true,
+  keyboard: {
+    enabled: true,
+  },
+  mousewheel: {
+    enabled: true,
+  }
+});
+
+// Mobile menu toggle
+document.getElementById('menu-btn').addEventListener('click', function() {
+  const menu = document.getElementById('menu');
+  menu.classList.toggle('hidden');
 });
 
 // Initial Load
-currentProducts = allProducts;
-displayProducts(currentProducts);
+displayProducts(allProducts);
 </script>
 
 </body>

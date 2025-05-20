@@ -1,44 +1,144 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - StyleOdds</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    {% load static tailwind_tags %}
+    {% tailwind_css %}
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+        }
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards;
+        }
+        .fade-in-left {
+            opacity: 0;
+            transform: translateX(-20px);
+            animation: fadeInLeft 0.8s forwards;
+        }
+        .fade-in-right {
+            opacity: 0;
+            transform: translateX(20px);
+            animation: fadeInRight 0.8s forwards;
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeInLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @keyframes fadeInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(to right, #3B82F6, #60A5FA);
+            padding: 0.5px;
+            border-radius: 1rem;
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        .bg-mesh {
+            background-image: radial-gradient(circle at center center, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0) 70%),
+                            repeating-linear-gradient(45deg, rgba(59, 130, 246, 0.1) 0px, rgba(59, 130, 246, 0.1) 1px, transparent 1px, transparent 10px);
+            background-size: 100% 100%, 20px 20px;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="min-h-screen flex items-center justify-center bg-gray-50">
-        <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">Login to StyleOdds</h2>
-            {% if error %}
-            <p class="text-red-500 text-center mb-4">{{ error }}</p>
-        {% endif %}
-            
-            <form method="POST">
-                {% csrf_token %}
-                <div class="mb-4">
-                    <label for="username" class="block text-gray-600">Username</label>
-                    <input type="text" name="username" id="username" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
+<body class="bg-slate-700 min-h-screen bg-mesh">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-5xl grid md:grid-cols-2 gap-8 items-center">
+            <!-- Left Side - Welcome Message -->
+            <div class="text-center md:text-left p-8 fade-in-left">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Welcome Back!</h1>
+                <p class="text-gray-300 text-lg mb-8">Step into your fashion journey with StyleOdds. Where style meets confidence.</p>
+                <div class="floating">
+                    <img src="{% static 'core/images/fashion-hero.jpg' %}" alt="Fashion" class="rounded-2xl shadow-2xl opacity-90">
                 </div>
-                <div class="mb-6">
-                    <label for="password" class="block text-gray-600">Password</label>
-                    <input type="password" name="password" id="password" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400">
-                </div>
-                <button type="submit" class="w-full bg-indigo-500 text-white py-2 rounded-lg hover:bg-indigo-600 transition">Login</button>
-            </form>
-    
-            <div class="mt-6 text-center text-sm text-gray-600">
-                Don't have an account?
-                <a href="{% url 'signup' %}" class="text-indigo-500 hover:underline">Signup</a>
             </div>
+
+            <!-- Right Side - Login Form -->
+            <div class="gradient-border fade-in-right">
+                <div class="bg-slate-800 p-8 rounded-xl">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-white">Login to StyleOdds</h2>
+                        <p class="text-gray-400 mt-2">Enter your credentials to continue</p>
+                    </div>
+
+                    {% if error %}
+                    <div class="bg-red-900/30 border border-red-500/50 rounded-lg p-4 mb-6">
+                        <p class="text-red-400 text-center">{{ error }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST" class="space-y-6">
+                        {% csrf_token %}
+                        <div>
+                            <label for="username" class="block text-gray-300 mb-2">Username</label>
+                            <div class="relative">
+                                <input type="text" name="username" id="username" required 
+                                    class="w-full pl-10 pr-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <span class="absolute left-3 top-3.5 text-gray-400">👤</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="password" class="block text-gray-300 mb-2">Password</label>
+                            <div class="relative">
+                                <input type="password" name="password" id="password" required 
+                                    class="w-full pl-10 pr-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                <span class="absolute left-3 top-3.5 text-gray-400">🔒</span>
+                            </div>
+                        </div>
+                        <button type="submit" 
+                            class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-full hover:from-blue-600 hover:to-blue-700 transform hover:scale-[1.02] transition-all duration-200">
+                            Login
+                        </button>
+                    </form>
     
-            <div class="mt-2 text-center text-sm text-gray-600">
-                Forgot your password?
-                <a href="{% url 'password_reset' %}" class="text-indigo-500 hover:underline">Reset Password</a>
+                    <div class="mt-6 text-center">
+                        <p class="text-gray-400 mb-2">Don't have an account?</p>
+                        <a href="{% url 'signup' %}" 
+                            class="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+                            Create Account
+                        </a>
+                    </div>
+    
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'password_reset' %}" 
+                            class="text-gray-400 hover:text-gray-300 text-sm transition-colors">
+                            Forgot your password?
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>    
-    
-
+    </div>
 </body>
+</html>
