@@ -11,3 +11,4 @@ whitenoise>=6.5.0
 
 # For Tailwind CSS support in Django
 django-tailwind>=3.7.0
+django-browser-reload>=1.18.0
