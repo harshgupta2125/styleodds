@@ -35,21 +35,28 @@
   </head>
 
   <body class="bg-slate-700 text-white">
-    <!-- Header -->
     <header class="bg-slate-800 shadow sticky top-0 z-50">
-      <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <div
+        class="container mx-auto px-6 py-4 flex justify-between items-center"
+      >
         <div class="text-2xl font-bold text-white">
           <a href="{% url 'home' %}">StyleOdds</a>
         </div>
 
-        <!-- Desktop Menu -->
-        <nav class="hidden md:flex space-x-8 text-gray-300 font-medium">
+        <!-- Hamburger Menu -->
+        <div class="hamburger md:hidden" onclick="toggleMenu()">
+          <div class="hamburger-line"></div>
+          <div class="hamburger-line"></div>
+          <div class="hamburger-line"></div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="nav-menu">
           <a href="{% url 'home' %}" class="hover:text-white transition">Home</a>
           <a href="{% url 'shop' %}" class="hover:text-white transition">Shop</a>
           <a href="{% url 'vintage_archive' %}" class="hover:text-white transition">Vintage Archive</a>
           <a href="{% url 'style_boards' %}" class="hover:text-white transition">Style Boards</a>
           <a href="{% url 'cart' %}" class="hover:text-white transition">Cart (<span id="cart-count">0</span>)</a>
-          
           {% if user.is_authenticated %}
           <div x-data="{ open: false }" class="relative">
             <button @click="open = !open" class="rounded-full bg-slate-700 p-2">
@@ -60,8 +67,16 @@
               @click.away="open = false"
               class="absolute right-0 mt-2 w-32 bg-slate-800 border border-slate-600 rounded shadow-md py-2"
             >
-              <a href="{% url 'profile' %}" class="block px-4 py-2 text-white hover:bg-slate-700">Profile</a>
-              <a href="{% url 'logout' %}" class="block px-4 py-2 text-white hover:bg-slate-700">Logout</a>
+              <a
+                href="{% url 'profile' %}"
+                class="block px-4 py-2 text-white hover:bg-slate-700"
+                >Profile</a
+              >
+              <a
+                href="{% url 'logout' %}"
+                class="block px-4 py-2 text-white hover:bg-slate-700"
+                >Logout</a
+              >
             </div>
           </div>
           {% else %}
