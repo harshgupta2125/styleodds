@@ -32,6 +32,7 @@ urlpatterns = [
     path('about', views.about, name="about"),
     path('cart', views.cart, name="cart"),
     path('checkout', views.checkout, name='checkout'),
+    path('base', views.base, name='base'),
     path('vintage_archive', views.vintage_archive, name='vintage_archive'),
     path('style_boards', views.style_boards, name='style_boards'),  
     

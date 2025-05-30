@@ -26,12 +26,12 @@ SECRET_KEY = 'django-insecure-^*4ka5$=g$vmxscz^qw1h6qb1jrs4!@942y9tsnm(3v*hn6%l(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['styleodds.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = ['styleodds.onrender.com', '192.168.91.215', '127.0.0.1']
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_TRUSTED_ORIGINS = ['https://styleodds.onrender.com','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://styleodds.onrender.com','https://*.192.168.91.215','https://*.127.0.0.1']
 
 
 
@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 ]
 
 TAILWIND_APP_NAME = 'theme'
-INTERNAL_IPS = ['127.0.0.1']
+INTERNAL_IPS = ['192.168.91.215', '127.0.0.1']
 
 NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 

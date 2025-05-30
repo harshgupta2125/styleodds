@@ -33,6 +33,62 @@
           transform: translateY(0);
         }
       }
+      /* Hamburger Menu Styles */
+      .hamburger {
+        display: none;
+        cursor: pointer;
+        padding: 10px;
+      }
+      .hamburger-line {
+        width: 25px;
+        height: 3px;
+        background-color: white;
+        margin: 5px 0;
+        transition: all 0.3s ease;
+      }
+      .nav-menu {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        gap: 2rem;
+        justify-content: flex-end;
+      }
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+        .nav-menu {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background-color: #1e293b;
+          padding: 1rem;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+          width: 100vw;
+          z-index: 100;
+        }
+        .nav-menu.active {
+          display: flex;
+        }
+        .nav-menu a {
+          width: 100%;
+          text-align: left;
+          padding: 0.5rem 0;
+        }
+        .hamburger.active .hamburger-line:nth-child(1) {
+          transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.active .hamburger-line:nth-child(2) {
+          opacity: 0;
+        }
+        .hamburger.active .hamburger-line:nth-child(3) {
+          transform: rotate(-45deg) translate(7px, -6px);
+        }
+      }
     </style>
   </head>
 
@@ -46,25 +102,20 @@
           <a href="{% url 'home' %}">StyleOdds</a>
         </div>
 
-        <!-- Desktop Menu -->
-        <nav class="hidden md:flex space-x-8 text-gray-300 font-medium">
-          <a href="{% url 'home' %}" class="hover:text-white transition"
-            >Home</a
-          >
-          <a href="{% url 'shop' %}" class="hover:text-white transition"
-            >Shop</a
-          >
-          <a
-            href="{% url 'vintage_archive' %}"
-            class="hover:text-white transition"
-            >Vintage Archive</a
-          >
-          <a href="{% url 'style_boards' %}" class="hover:text-white transition"
-            >Style Boards</a
-          >
-          <a href="{% url 'cart' %}" class="hover:text-white transition"
-            >Cart (<span id="cart-count">0</span>)</a
-          >
+        <!-- Hamburger Menu -->
+        <div class="hamburger md:hidden" onclick="toggleMenu()">
+          <div class="hamburger-line"></div>
+          <div class="hamburger-line"></div>
+          <div class="hamburger-line"></div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="nav-menu">
+          <a href="{% url 'home' %}" class="hover:text-white transition">Home</a>
+          <a href="{% url 'shop' %}" class="hover:text-white transition">Shop</a>
+          <a href="{% url 'vintage_archive' %}" class="hover:text-white transition">Vintage Archive</a>
+          <a href="{% url 'style_boards' %}" class="hover:text-white transition">Style Boards</a>
+          <a href="{% url 'cart' %}" class="hover:text-white transition">Cart (<span id="cart-count">0</span>)</a>
           {% if user.is_authenticated %}
           <div x-data="{ open: false }" class="relative">
             <button @click="open = !open" class="rounded-full bg-slate-700 p-2">
@@ -242,14 +293,25 @@
 
     <!-- Scripts -->
     <script>
-      const menuBtn = document.getElementById("menu-btn");
-      const menu = document.getElementById("menu");
-      if (menuBtn && menu) {
-        menuBtn.addEventListener("click", () => {
-          menu.classList.toggle("hidden");
-        });
+      // Toggle Menu Function
+      function toggleMenu() {
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
       }
 
+      // Close menu when clicking outside
+      document.addEventListener('click', function(event) {
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        if (!hamburger.contains(event.target) && !navMenu.contains(event.target)) {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+        }
+      });
+
+      // Update cart count
       const cartCount = document.getElementById("cart-count");
       function updateCartCount() {
         let cart = JSON.parse(localStorage.getItem("cart")) || [];

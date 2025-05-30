@@ -36,8 +36,8 @@ def success_view(request):
 def vintage_archive(request):
     return render(request, 'vintage_archive.html')
 
-def style_boards(request):
-    return render(request, 'style_boards.html')
+def base(request):
+    return render(request, 'base.html')
 
 
 
