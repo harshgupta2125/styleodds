@@ -11,6 +11,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
+from django.conf import settings
+import stripe
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 def home (request):
     return render(request, 'home.html')
