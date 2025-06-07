@@ -67,33 +67,32 @@ def style_boards(request):
 
 
 # payment gateway
+import json
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
 @csrf_exempt
 def create_checkout_session(request):
     if request.method == 'POST':
-        stripe.api_key = settings.STRIPE_SECRET_KEY
+        data = json.loads(request.body)
+        amount = int(float(data.get('amount', 1000)) * 100)  # convert to paise
+        product_name = data.get('product', 'Clothing Purchase')
 
-        try:
-            # You can calculate total dynamically from cart
-            session = stripe.checkout.Session.create(
-                payment_method_types=['card'],
-                line_items=[
-                    {
-                        'price_data': {
-                            'currency': 'inr',
-                            'product_data': {
-                                'name': 'Clothing Purchase',
-                            },
-                            'unit_amount': 1000 * 100,  # ₹1000 (multiply by 100 because Stripe uses paise)
-                        },
-                        'quantity': 1,
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'inr',
+                    'product_data': {
+                        'name': product_name,
                     },
-                ],
-                mode='payment',
-                success_url='http://127.0.0.1:8000/success/',
-                cancel_url='http://127.0.0.1:8000/cart/',
-            )
-            return redirect(session.url, code=303)
-        except Exception as e:
-            return JsonResponse({'error': str(e)})
-    return render(request, 'checkout.html')
+                    'unit_amount': amount,
+                },
+                'quantity': 1,
+            }],
+            mode='payment',
+            success_url='https://yourdomain.com/success/',
+            cancel_url='https://yourdomain.com/cancel/',
+        )
+        return JsonResponse({'id': session.id})
 
