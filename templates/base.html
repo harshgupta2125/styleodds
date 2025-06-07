@@ -155,6 +155,16 @@
         });
         // Update cart count
         function updateCartCount() {
+            const isAuthenticated = "{{ user.is_authenticated }}" === "True";
+            if (!isAuthenticated) {
+                // Clear cart if user is not authenticated
+                localStorage.removeItem("cart");
+                const cartCount = document.getElementById("cart-count");
+                if (cartCount) {
+                    cartCount.textContent = "0";
+                }
+                return;
+            }
             let cart = JSON.parse(localStorage.getItem("cart")) || [];
             const cartCount = document.getElementById("cart-count");
             if (cartCount) {

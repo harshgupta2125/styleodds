@@ -98,7 +98,7 @@
                     </div>
                     {% endif %}
                     
-                    <form method="POST" class="space-y-6">
+                    <form method="POST" action="{% url 'login' %}" class="space-y-6">
                         {% csrf_token %}
                         <div>
                             <label for="username" class="block text-gray-300 mb-2">Username</label>

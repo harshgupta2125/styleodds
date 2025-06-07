@@ -1,6 +1,114 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block extra_head %}
+<style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(to bottom, #1e293b, #0f172a);
+    }
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s forwards;
+    }
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .product-card {
+      background: rgba(30, 41, 59, 0.7);
+      border: 2px solid #2563eb;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      position: relative;
+    }
+    .product-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 16px 40px 0 rgba(37, 99, 235, 0.25), 0 2px 8px 0 rgba(0,0,0,0.10);
+      border-color: #3b82f6;
+    }
+    .product-card img {
+      border-radius: 0.75rem;
+      height: 16rem;
+      width: 100%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      box-shadow: 0 4px 16px 0 rgba(37, 99, 235, 0.10);
+      transition: transform 0.3s;
+    }
+    .product-card:hover img {
+      transform: scale(1.04);
+    }
+    .product-card h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+    .product-card p {
+      color: #cbd5e1;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .product-card .price {
+      color: #60a5fa;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+    .product-card .btn-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: auto;
+    }
+    .product-card button {
+      border: 2px solid #2563eb;
+      border-radius: 9999px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.5rem 1.25rem;
+      transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px 0 rgba(37, 99, 235, 0.10);
+      outline: none;
+      cursor: pointer;
+    }
+    .product-card button.view-details {
+      background: linear-gradient(90deg, #2563eb 0%, #60a5fa 100%);
+      color: #fff;
+      border-color: #2563eb;
+    }
+    .product-card button.view-details:hover {
+      background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+      color: #fff;
+      border-color: #1e40af;
+      transform: scale(1.06);
+      box-shadow: 0 4px 16px 0 rgba(37, 99, 235, 0.18);
+    }
+    .product-card button.add-to-cart {
+      background: #fff;
+      color: #2563eb;
+      border-color: #60a5fa;
+    }
+    .product-card button.add-to-cart:hover {
+      background: #2563eb;
+      color: #fff;
+      border-color: #2563eb;
+      transform: scale(1.06);
+      box-shadow: 0 4px 16px 0 rgba(37, 99, 235, 0.18);
+    }
+</style>
+{% endblock %}
+
 {% block content %}
     <!-- Hero Section -->
     <section class="relative py-20 bg-cover bg-center" style="background-image: url('{% static 'core/images/fashion-hero.jpg' %}');">
@@ -62,4 +170,184 @@
         <span class="text-gray-300">Loading more products...</span>
       </div>
     </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Toggle Menu Function
+  function toggleMenu() {
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
+  }
+
+  // Close menu when clicking outside
+  document.addEventListener('click', function(event) {
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    if (!hamburger.contains(event.target) && !navMenu.contains(event.target)) {
+      hamburger.classList.remove('active');
+      navMenu.classList.remove('active');
+    }
+  });
+
+  // Update cart count
+  const cartCount = document.getElementById("cart-count");
+  function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (cartCount) {
+      cartCount.textContent = cart.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      );
+    }
+  }
+  updateCartCount();
+  
+  const productsContainer = document.getElementById("products");
+  const loader = document.getElementById("loader");
+  const currentPageElement = document.getElementById("currentPage");
+  const prevPageBtn = document.getElementById("prevPage");
+  const nextPageBtn = document.getElementById("nextPage");
+
+  let page = 1;
+  let currentCategory = "all";
+  const limit = 8;
+  const fashionCategories = [
+    "mens-shirts",
+    "womens-dresses",
+    "womens-shoes",
+    "tops",
+    "sunglasses",
+    "womens-bags",
+    "mens-shoes",
+  ];
+
+  async function loadProducts(reset = false) {
+    try {
+      loader.classList.remove("hidden");
+      if (reset) {
+        productsContainer.innerHTML = "";
+      }
+
+      let products = [];
+
+      if (currentCategory === "all") {
+        // For "all" category, fetch products from each category
+        const productsPerCategory = Math.ceil(limit / fashionCategories.length);
+        for (const category of fashionCategories) {
+          const res = await fetch(
+            `https://dummyjson.com/products/category/${category}?limit=${productsPerCategory}&skip=${
+              (page - 1) * productsPerCategory
+            }`
+          );
+          const data = await res.json();
+          if (data.products && data.products.length > 0) {
+            products = products.concat(data.products);
+          }
+        }
+      } else {
+        // For specific category
+        const res = await fetch(
+          `https://dummyjson.com/products/category/${currentCategory}?limit=${limit}&skip=${
+            (page - 1) * limit
+          }`
+        );
+        const data = await res.json();
+        products = data.products || [];
+      }
+
+      loader.classList.add("hidden");
+
+      if (products.length === 0) {
+        productsContainer.innerHTML = `
+          <div class="col-span-full text-center text-gray-400 py-8">
+            No more products available
+          </div>
+        `;
+        nextPageBtn.disabled = true;
+        return;
+      }
+
+      productsContainer.innerHTML = "";
+
+      products.forEach((product) => {
+        const priceInINR = Math.round(product.price * 83.5);
+        const productCard = `
+          <div class="product-card">
+            <img src="${product.thumbnail}" alt="${product.title}">
+            <div class="mt-4 flex-1">
+              <h3 class="text-lg font-semibold text-white">${product.title}</h3>
+              <p class="price">₹${priceInINR}</p>
+            </div>
+            <div class="btn-group mt-4">
+              <button onclick="viewDetails(${product.id})" class="view-details">View Details</button>
+              <button onclick="addToCart(${product.id}, '${product.title}', ${priceInINR}, '${product.thumbnail}')" class="add-to-cart">Add to Cart</button>
+            </div>
+          </div>
+        `;
+        productsContainer.insertAdjacentHTML("beforeend", productCard);
+      });
+
+      currentPageElement.textContent = `Page ${page}`;
+      prevPageBtn.disabled = page === 1;
+      nextPageBtn.disabled = products.length < limit;
+    } catch (error) {
+      console.error("Error loading products:", error);
+      loader.classList.add("hidden");
+      productsContainer.innerHTML = `
+        <div class="col-span-full text-center text-red-400 py-8">
+          Error loading products. Please try again.
+        </div>
+      `;
+    }
+  }
+
+  function nextPage() {
+    page++;
+    loadProducts();
+  }
+
+  function previousPage() {
+    if (page > 1) {
+      page--;
+      loadProducts();
+    }
+  }
+
+  function filterProducts(category) {
+    currentCategory = category;
+    page = 1;
+    loadProducts(true);
+  }
+
+  function viewDetails(id) {
+    localStorage.setItem("productId", id);
+    window.location.href = "{% url 'view_details' %}";
+  }
+
+  function addToCart(id, title, price, image) {
+    const isAuthenticated = "{{ user.is_authenticated }}" === "True";
+    if (!isAuthenticated) {
+      // Redirect to login if not authenticated
+      localStorage.setItem('pendingCartAdd', JSON.stringify({id, title, price, image}));
+      window.location.href = "{% url 'login' %}";
+      return;
+    }
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingProduct = cart.find((item) => item.id === id);
+    if (existingProduct) {
+      existingProduct.quantity += 1;
+    } else {
+      cart.push({ id, title, price, image, quantity: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    alert("Item added to cart!");
+  }
+
+  // Initial load
+  loadProducts();
+</script>
 {% endblock %} 

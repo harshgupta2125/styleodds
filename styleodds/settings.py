@@ -28,10 +28,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['styleodds.onrender.com', '192.168.91.215', '127.0.0.1']
 
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-CSRF_TRUSTED_ORIGINS = ['https://styleodds.onrender.com','https://*.192.168.91.215','https://*.127.0.0.1']
+# CSRF Settings
+CSRF_COOKIE_SECURE = False  # Set to False for development
+SESSION_COOKIE_SECURE = False  # Set to False for development
+CSRF_TRUSTED_ORIGINS = [
+    'http://styleodds.onrender.com',
+    'https://styleodds.onrender.com',
+    'http://192.168.91.215',
+    'http://127.0.0.1',
+    'http://localhost',
+]
 
 
 
