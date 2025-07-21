@@ -159,6 +159,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 import os
 
-STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'your_default_key_here')  # Optional default for local dev
+# Stripe API keys
+STRIPE_PUBLISHABLE_KEY = os.environ.get("STRIPE_PUBLISHABLE_KEY")
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")

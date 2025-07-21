@@ -33,11 +33,8 @@ urlpatterns = [
     path('cart', views.cart, name="cart"),
     path('checkout', views.checkout, name='checkout'),
     path('base', views.base, name='base'),
-    path('vintage_archive', views.vintage_archive, name='vintage_archive'),
-    path('style_boards', views.style_boards, name='style_boards'),  
-    
-    path('accounts/', include('accounts.urls')),
-    
+    path('vintage_archive', views.vintage_archive, name='vintage_archive'),   
+    path('accounts/', include('accounts.urls')),    
     path('create-checkout-session/', views.create_checkout_session, name='create_checkout_session'),
     path('success/', views.success_view, name='success'),
     

@@ -96,6 +96,36 @@
         .footer-link:hover {
             color: #fff;
         }
+
+        /* Filter Button Styles */
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            border: 1px solid #4b5563; /* slate-600 */
+            border-radius: 9999px; /* rounded-full */
+            font-weight: 500;
+            color: #d1d5db; /* gray-300 */
+            background-color: transparent;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s cubic-bezier(.4,2,.6,1);
+        }
+        .filter-btn:hover {
+            background-color: #374151; /* slate-700 */
+            color: #ffffff;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 24px 0 rgba(0,0,0,0.2);
+        }
+        .filter-btn.active {
+            background-color: #3b82f6; /* blue-500 */
+            color: #ffffff;
+            border-color: #3b82f6;
+            font-weight: 600;
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39);
+        }
+        .filter-btn:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: none;
+        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
@@ -117,7 +147,6 @@
                 <a href="{% url 'home' %}" class="hover:text-white transition">Home</a>
                 <a href="{% url 'shop' %}" class="hover:text-white transition">Shop</a>
                 <a href="{% url 'vintage_archive' %}" class="hover:text-white transition">Vintage Archive</a>
-                <a href="{% url 'style_boards' %}" class="hover:text-white transition">Style Boards</a>
                 <a href="{% url 'cart' %}" class="hover:text-white transition">Cart (<span id="cart-count">0</span>)</a>
                 {% if user.is_authenticated %}
                 <div x-data="{ open: false }" class="relative w-full md:w-auto">

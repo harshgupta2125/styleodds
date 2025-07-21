@@ -33,7 +33,7 @@ def about (request):
     return render(request, 'about.html')
 
 def checkout (request):
-    return render(request, 'checkout.html')
+    return render(request, 'checkout.html', {'STRIPE_PUBLISHABLE_KEY': settings.STRIPE_PUBLISHABLE_KEY})
 
 def success_view(request):
     return render(request, 'success.html')
@@ -59,10 +59,7 @@ def cart(request):
     # your cart logic here
     return render(request, 'cart.html')
 
-@login_required(login_url='login')
-def style_boards(request):
-    # your style board logic here
-    return render(request, 'style_boards.html')
+
 
 
 
@@ -74,7 +71,11 @@ from django.http import JsonResponse
 @csrf_exempt
 def create_checkout_session(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON received'}, status=400)
+
         amount = int(float(data.get('amount', 1000)) * 100)  # convert to paise
         product_name = data.get('product', 'Clothing Purchase')
 
@@ -91,8 +92,8 @@ def create_checkout_session(request):
                 'quantity': 1,
             }],
             mode='payment',
-            success_url='https://yourdomain.com/success/',
-            cancel_url='https://yourdomain.com/cancel/',
+            success_url='http://127.0.0.1:8000/success/',
+            cancel_url='http://127.0.0.1:8000/cancel/',
         )
         return JsonResponse({'id': session.id})
 

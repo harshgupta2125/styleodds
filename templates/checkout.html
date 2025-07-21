@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block extra_head %}
+  <script src="https://js.stripe.com/v3/"></script>
   <style>
     .fade-in-up {
       opacity: 0;
@@ -19,7 +20,7 @@
 
 {% block content %}
 <!-- Hero Section -->
-<section class="relative py-20 bg-cover bg-center" style="background-image: url('{% static 'core/images/fashion-hero.jpg' %}');">
+<section class="relative py-20 bg-cover bg-center" style="background-image: url('{% static 'images/fashion-hero.jpg' %}');">
   <div class="absolute inset-0 bg-gradient-to-b from-blue-900 via-blue-800 to-slate-900 opacity-80"></div>
   <div class="text-center text-white relative z-10 fade-in-up">
     <h1 class="text-5xl md:text-7xl font-extrabold mb-6">Checkout</h1>
@@ -126,5 +127,43 @@
   }
 
   loadSummary();
+
+  const form = document.getElementById('checkout-form');
+  form.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const totalText = document.getElementById('order-total').textContent;
+    const amount = parseFloat(totalText.replace('₹', ''));
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const stripe = Stripe('{{ STRIPE_PUBLISHABLE_KEY }}'); // Make sure to pass this from settings
+
+    fetch('/create-checkout-session/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      },
+      body: JSON.stringify({
+        'amount': amount,
+        'product': 'StyleOdds Purchase' 
+      })
+    })
+    .then(response => response.json())
+    .then(session => {
+      if (session.error) {
+        alert(session.error);
+        return;
+      }
+      return stripe.redirectToCheckout({ sessionId: session.id });
+    })
+    .then(function(result) {
+      if (result.error) {
+        alert(result.error.message);
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  });
 </script>
 {% endblock %}
