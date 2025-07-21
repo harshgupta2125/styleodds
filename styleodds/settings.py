@@ -21,12 +21,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^*4ka5$=g$vmxscz^qw1h6qb1jrs4!@942y9tsnm(3v*hn6%l('
-
+from dotenv import load_dotenv
+load_dotenv()
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['styleodds.onrender.com', '192.168.91.215', '127.0.0.1']
+ALLOWED_HOSTS = ['styleodds.onrender.com', '127.0.0.1']
 
 # CSRF Settings
 CSRF_COOKIE_SECURE = False  # Set to False for development
@@ -34,7 +35,6 @@ SESSION_COOKIE_SECURE = False  # Set to False for development
 CSRF_TRUSTED_ORIGINS = [
     'http://styleodds.onrender.com',
     'https://styleodds.onrender.com',
-    'http://192.168.91.215',
     'http://127.0.0.1',
     'http://localhost',
 ]
@@ -57,7 +57,7 @@ INSTALLED_APPS = [
 ]
 
 TAILWIND_APP_NAME = 'theme'
-INTERNAL_IPS = ['192.168.91.215', '127.0.0.1']
+INTERNAL_IPS = ['127.0.0.1', 'https://styleodds.onrender.com']
 
 NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
