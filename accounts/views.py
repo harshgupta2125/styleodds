@@ -1,11 +1,10 @@
-
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
+from .models import UserProfile, CartItem  # Combine imports
+from .forms import UserProfileForm
 
 def signup_view(request):
     if request.method == 'POST':
@@ -19,12 +18,12 @@ def signup_view(request):
         
         user = User.objects.create_user(username=username, password=password)
         user.save()
+        # Create a UserProfile for the new user
+        UserProfile.objects.create(user=user)
         messages.success(request, 'Account created successfully. Please log in.')
         return redirect('login')
     
     return render(request, 'accounts/signup.html')
-
-
 
 # Login View
 def login_view(request):
@@ -39,30 +38,15 @@ def login_view(request):
             return render(request, 'accounts/login.html', {'error': 'Invalid username or password'})
     return render(request, 'accounts/login.html')
 
-
-
 @login_required(login_url='login')
 def cart_view(request):
     # Logic for displaying the cart items
-    return render(request, '/cart.html')
-
-@login_required
-def profile_view(request):
-    return render(request, 'accounts/profile.html')
-
+    return render(request, 'cart.html')  # Fixed path
 
 # Logout View
 def logout_view(request):
     logout(request)
     return redirect('home')
-
-
-
-from django.shortcuts import render, redirect
-from .models import UserProfile
-from .forms import UserProfileForm
-from django.contrib.auth.decorators import login_required
-
 
 @login_required
 def profile_view(request):
@@ -96,8 +80,6 @@ def edit_profile_view(request):
         form = UserProfileForm(instance=profile)
 
     return render(request, 'accounts/profile_edit.html', {'form': form})
-
-from .models import CartItem  # Replace with your actual cart item model
 
 @login_required(login_url='login')  # Redirects to login if not logged in
 def cart(request):
